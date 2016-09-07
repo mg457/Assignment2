@@ -19,35 +19,33 @@ public class DecisionTreeClassifier implements Classifier {
 	
 	@Override
 	public void train(DataSet data) {
-		ArrayList<Example> examples = data.getData();
-		int numFeatures = examples.get(0).getFeatureSet().size();
-		ArrayList<Double> trainingErrors = new ArrayList<Double>();
-		ArrayList<Integer> usedFeatures = new ArrayList<Integer>();
-		ArrayList<Double> splitLeft = new ArrayList<Double>();
-		ArrayList<Double> splitRight = new ArrayList<Double>();
-		for(int i = 0; i < numFeatures; i++){
-			trainingErrors.add(calculateTrainingError(i, examples, usedFeatures, splitLeft));
-		}
-		System.out.println(trainingErrors);
-		int minIndex = trainingErrors.indexOf(Collections.min(trainingErrors));
-		
-		DecisionTreeNode root = new DecisionTreeNode(minIndex);
-		ArrayList<Integer> usedFeatures = new ArrayList<Integer>();
-		ArrayList<Double> splitLeft = new ArrayList<Double>();
-		ArrayList<Double> splitRight = new ArrayList<Double>();
-		splitLeft.add(0);
-		splitRight.add(1);
-		
-		usedFeatures.add(minIndex);
-		if(depth == 1){
-			
-		}else{
-		root.setLeft(trainRec(depth-1,usedFeatures,splitLeft));
-		root.setRight(trainRec(depth-1,usedfeatures,splitRight));
-		}
-	}
+        ArrayList<Example> examples = data.getData();
+        int numFeatures = examples.get(0).getFeatureSet().size();
+        ArrayList<Double> trainingErrors = new ArrayList<Double>();
+        ArrayList<Integer> usedFeatures = new ArrayList<Integer>();
+        ArrayList<Double> splitLeft = new ArrayList<Double>();
+        ArrayList<Double> splitRight = new ArrayList<Double>();
+        for (int i = 0; i < numFeatures; i++) {
+            trainingErrors.add((double) calculateTrainingError(i, examples, usedFeatures, splitLeft));
+        }
+        System.out.println(trainingErrors);
+        int minIndex = trainingErrors.indexOf(Collections.min(trainingErrors));
+        
+        DecisionTreeNode root = new DecisionTreeNode(minIndex);
+        
+        splitLeft.add(0.0);
+        splitRight.add(1.0);
+        
+        usedFeatures.add(minIndex);
+        if (depth == 1) {
+            
+        } else {
+            root.setLeft(trainRec(depth - 1, usedFeatures, splitLeft));
+            root.setRight(trainRec(depth - 1, usedFeatures, splitRight));
+        }
+    }
 	
-	private DecisionTreeNode trainRec(int depth, ArrayList<Double> usedFeatures, ArrayList<Double> splitDirections){
+	private DecisionTreeNode trainRec(int depth, ArrayList<Double> usedFeatures, ArrayList<Double> splitDirection){
 		
 	}
 
