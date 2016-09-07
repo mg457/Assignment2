@@ -19,8 +19,17 @@ public class DecisionTreeClassifier implements Classifier {
 	
 	@Override
 	public void train(DataSet data) {
-		// TODO Auto-generated method stub
-
+		ArrayList<Example> examples = data.getData();
+		int numFeatures = examples.get(0).getFeatureSet().size();
+		ArrayList<Double> trainingErrors = new ArrayList<Double>();
+		for(int i = 0; i < numFeatures; i++){
+			trainingErrors.add(calculateTrainingError(i, examples));
+		}
+		System.out.println(trainingErrors);
+		int minIndex = trainingErrors.indexOf(Collections.min(trainingErrors));
+		DecisionTreeNode root = new DecisionTreeNode(minIndex);
+		
+		
 	}
 
 	@Override
