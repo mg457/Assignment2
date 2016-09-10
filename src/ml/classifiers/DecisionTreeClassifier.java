@@ -22,11 +22,8 @@ public class DecisionTreeClassifier implements Classifier {
 	@Override
 	public void train(DataSet data) {
         ArrayList<Example> examples = data.getData();
-        //int numFeatures = examples.get(0).getFeatureSet().size();
-        //ArrayList<Double> trainingErrors = new ArrayList<Double>();
         ArrayList<Integer> usedFeatures = new ArrayList<Integer>();
         ArrayList<Double> splitDirection = new ArrayList<Double>();
-       
         DecisionTreeNode root = trainRec(examples, depth, usedFeatures, splitDirection);
         System.out.println(root.treeString());
     }
@@ -43,22 +40,32 @@ public class DecisionTreeClassifier implements Classifier {
         }
         
         System.out.println(trainingErrors);
+        
         int minIndex = trainingErrors.indexOf(Collections.min(trainingErrors));
+        trainingErrors.remove(minIndex);
+        //make sure that we don't split on the same feature twice
+        while(usedFeatures.contains(minIndex)){
+        	
+        }
+        
         
         DecisionTreeNode root = new DecisionTreeNode(minIndex);
         
+        splitLeft = (ArrayList<Double>) splitDirection.clone();
         splitLeft.add(0.0);
+        splitRight = (ArrayList<Double>) splitDirection.clone();
         splitRight.add(1.0);
-        
         usedFeatures.add(minIndex);
+        ArrayList<Integer> usedFeatures1 = (ArrayList<Integer>) usedFeatures.clone();
         
         if (depth == 1) {
+  
             root.setLeft(new DecisionTreeNode(getPrediction(examples, usedFeatures, splitLeft)));
-            root.setRight(new DecisionTreeNode(getPrediction(examples, usedFeatures, splitRight)));
+            root.setRight(new DecisionTreeNode(getPrediction(examples, usedFeatures1, splitRight)));
         } else {
         	System.out.println("recursing");
             root.setLeft(trainRec(examples, depth - 1, usedFeatures, splitLeft));
-            root.setRight(trainRec(examples, depth - 1, usedFeatures, splitRight));
+            root.setRight(trainRec(examples, depth - 1, usedFeatures1, splitRight));
         }
 		return root;
 	}
@@ -97,10 +104,14 @@ public class DecisionTreeClassifier implements Classifier {
 		double bin10 = 0;
 		double bin01 = 0;
 		double bin11 = 0;
+		double count = 0.0;
 		
 		for(int i = 0; i < size; i ++){
+			
 			Example example = examples.get(i);
 			if(exampleIsInSubset(example, usedFeatures, usedVals)){
+				count ++;
+				
 				if(example.getFeature(featureIndex) == 0.00){
 					if(example.getLabel() == 0.00){
 						bin00 ++;
@@ -112,11 +123,14 @@ public class DecisionTreeClassifier implements Classifier {
 				}else bin11++;	
 			}
 		}
-		double accuracy = (Math.max(bin00, bin01) + Math.max(bin10, bin11))/size;
+		System.out.println(bin00 + " " + bin01 + " " + bin10 + " "+ "" + bin11);
+		
+		double accuracy = (Math.max(bin00, bin01) + Math.max(bin10, bin11))/count;
 		return 1-accuracy;	
 	}
 	
 	private boolean exampleIsInSubset(Example example, ArrayList<Integer> usedFeatures, ArrayList<Double> usedVals){
+		
 		boolean retVal = true;
 		for(int i = 0; i < usedFeatures.size(); i ++){
 			retVal = retVal && (example.getFeature(usedFeatures.get(i)) == usedVals.get(i));
@@ -129,7 +143,7 @@ public class DecisionTreeClassifier implements Classifier {
 		
 		DecisionTreeClassifier dtc = new DecisionTreeClassifier();
 		DataSet dataset = new DataSet("/Users/mollydriscoll/Documents/Pomona/fall_16/Machine Learning/ml/train-titanic.csv", 6);
-		dtc.setDepthLimit(1);
+		dtc.setDepthLimit(3);
 		dtc.train(dataset);
 		
 	}
