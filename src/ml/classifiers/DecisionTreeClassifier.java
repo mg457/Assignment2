@@ -1,6 +1,7 @@
 package ml.classifiers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.print.DocFlavor.URL;
 
@@ -15,6 +16,7 @@ public class DecisionTreeClassifier implements Classifier {
 	
 	public void setDepthLimit(int depth) {
 		this.depth = depth;
+		
 	}
 	
 	@Override
@@ -43,9 +45,16 @@ public class DecisionTreeClassifier implements Classifier {
             root.setLeft(trainRec(depth - 1, usedFeatures, splitLeft));
             root.setRight(trainRec(depth - 1, usedFeatures, splitRight));
         }
+        System.out.println("hi");
     }
 	
-	private DecisionTreeNode trainRec(int depth, ArrayList<Double> usedFeatures, ArrayList<Double> splitDirection){
+	private DecisionTreeNode trainRec(int depth, ArrayList<Integer> usedFeatures, ArrayList<Double> splitDirection){
+		return new DecisionTreeNode(0);
+	}
+	
+	private double getPrediction(ArrayList<Example> examples, ArrayList<Integer> usedFeatures, ArrayList<Double> usedVals){
+		int size = examples.size();
+		return 0.0;
 		
 	}
 
@@ -55,16 +64,16 @@ public class DecisionTreeClassifier implements Classifier {
 		return 0;
 	}
 	
-	private int calculateTrainingError(int featureIndex, ArrayList<Example> examples, ArrayList<Integer> usedFeatures, ArrayList<Double> usedVals) {
+	private double calculateTrainingError(int featureIndex, ArrayList<Example> examples, ArrayList<Integer> usedFeatures, ArrayList<Double> usedVals) {
 		//iterate through each example, through in the correct bin, bin0 and survive, bin0 and die, bin1 and survive..
 		int size = examples.size();
-		int bin00 = 0;
-		int bin10 = 0;
-		int bin01 = 0;
-		int bin11 = 0;
+		double bin00 = 0;
+		double bin10 = 0;
+		double bin01 = 0;
+		double bin11 = 0;
 		
 		for(int i = 0; i < size; i ++){
-			example = examples.get(i);
+			Example example = examples.get(i);
 			if(exampleIsInSubset(example, usedFeatures, usedVals)){
 				if(example.getFeature(featureIndex) == 0.00){
 					if(example.getLabel() == 0.00){
@@ -77,7 +86,7 @@ public class DecisionTreeClassifier implements Classifier {
 				}else bin11++;	
 			}
 		}
-		int accuracy = (Math.max(bin00, bin01) + Math.max(bin10, bin11))/size;
+		double accuracy = (Math.max(bin00, bin01) + Math.max(bin10, bin11))/size;
 		return 1-accuracy;	
 	}
 	
@@ -86,15 +95,15 @@ public class DecisionTreeClassifier implements Classifier {
 		for(int i = 0; i < usedFeatures.size(); i ++){
 			retVal = retVal && (example.getFeature(usedFeatures.get(i)) == usedVals.get(i));
 		}
-		return retVal
+		return retVal;
 	}
 	
 	
 	public static void main(String[] args) {
-		DecisionTreeClassifier dtc = new DecisionTreeClassifier();
-		DataSet dataset = new DataSet("/Users/maddie/Documents/FALL2016/train-titanic.csv", 6);
-		System.out.println(dataset.getAllFeatureIndices().toString());
 		
+		DecisionTreeClassifier dtc = new DecisionTreeClassifier();
+		DataSet dataset = new DataSet("/Users/mollydriscoll/Documents/Pomona/fall_16/Machine Learning/ml/train-titanic.csv", 6);
+		dtc.train(dataset);
 	}
 
 }
